@@ -63,18 +63,33 @@ def menu_loop():
         elif choice in menu:
             menu[choice]()
 
-def view_entry():
+def view_entry(try_again=None):
     """View a single product's inventory"""
-    clear()
-    new_id = input("Enter the product ID: ")
+    if try_again:
+        clear()
+        print("Product ID {} was not found. Please try again.".format(try_again))
+
+    while True:
+        new_id = input("Enter the product ID: ")
+        try:
+            new_id = int(new_id)
+            break
+        except ValueError:
+            clear()
+            print("You must enter a number")
+
     entries = Product.select().where(Product.product_id == new_id)
     if entries:
+        clear()
         print("Product ID: {}\n".format(new_id))
         for entry in entries:
             print("Product name: {}".format(entry.product_name))
             print("Product price: {}".format(entry.product_price))
             print("Product quantity: {}".format(entry.product_quantity))
             print("Date updated: {}".format(entry.date_updated))
+    else:
+        view_entry(try_again=new_id)
+       
 
 
 def add_entry():
