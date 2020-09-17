@@ -120,13 +120,13 @@ def backup_data():
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         all_products = Product.select()
         for item in all_products:
-            writer.writerow({
-                'product_id': item['product_id'],
-                'product_name': item['product_name'],
-                'product_quantity': item['product_quantity'],
-                'product_price': item['product_price'],
-                'date_updated': item['date_updated']
-            })
+            writer.writerow(
+                'product_id' = item.product_id,
+                'product_name' = item.product_name,
+                'product_quantity' = item.product_quantity,
+                'product_price' = item.product_price,
+                'date_updated' = item.date_updated
+            )
 
 
 
