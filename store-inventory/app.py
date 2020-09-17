@@ -58,12 +58,14 @@ def menu_loop():
             print("{}) {}".format(key, value.__doc__)) 
         choice = input("\nChoose an option: ").lower().strip()
         if choice not in choices:
+            clear()
             print("\n\nInvalid option, please try again")
         elif choice in menu:
             menu[choice]()
 
 def view_entry():
     """View a single product's inventory"""
+    clear()
     new_id = input("Enter the product ID: ")
     entries = Product.select().where(Product.product_id == new_id)
     if entries:
@@ -77,6 +79,7 @@ def view_entry():
 
 def add_entry():
     """Add a new product to the database"""
+    clear()
     name = input("Enter the product name: ")
     while True:
         quantity = input("Enter the quantity: ")
@@ -107,6 +110,7 @@ def add_entry():
 
 def backup_data():
     """Make a backup of the entire inventory"""
+    clear()
     filename = "Backup_Inventory.csv"
     fieldnames = [
         'product_id',
@@ -118,15 +122,23 @@ def backup_data():
 
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
         all_products = Product.select()
         for item in all_products:
-            writer.writerow(
-                'product_id' = item.product_id,
-                'product_name' = item.product_name,
-                'product_quantity' = item.product_quantity,
-                'product_price' = item.product_price,
-                'date_updated' = item.date_updated
-            )
+            writer.writerow({
+                'product_id': item.product_id,
+                'product_name': item.product_name,
+                'product_quantity': item.product_quantity,
+                'product_price': item.product_price,
+                'date_updated': item.date_updated
+            })
+    
+    if os.path.isfile(filename):
+        clear()
+        print("Backup was successful!")
+    else:
+        clear()
+        print("Backup was not able to be completed...")
 
 
 
