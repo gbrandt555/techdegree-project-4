@@ -136,7 +136,7 @@ def backup_data():
     ]
 
     with open(filename, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=',')
         writer.writeheader()
         all_products = Product.select()
         for item in all_products:
