@@ -4,6 +4,7 @@ from collections import OrderedDict
 import csv
 import datetime
 import os
+import sys
 
 
 db = SqliteDatabase("inventory.db")
@@ -28,19 +29,28 @@ def clean_data():
             row['product_quantity'] = int(row['product_quantity'])
             row['product_price'] = int(row['product_price'].replace('$', '').replace('.', ''))
             row['date_updated'] = datetime.datetime.strptime(row['date_updated'], '%m/%d/%Y')
-
-            new_inventory.append(dict(
-                product_name = row['product_name'],
-                product_quantity = row['product_quantity'],
-                product_price = row['product_price'],
-                date_updated = row['date_updated']
-            ))
+        for row in rows:
+            try:    
+                Product.create(
+                    product_name = row['product_name'],
+                    product_quantity = row['product_quantity'],
+                    product_price = row['product_price'],
+                    date_updated = row['date_updated']
+                ).save()
+            except IntegrityError:
+                temp = Product.get(product_name=row['product_name'])
+                temp.product_name = row['product_name']
+                temp.product_quantity = row['product_quantity']
+                temp.product_price = row['product_price']
+                temp.date_updated = row['date_updated']
+                temp.save()
+        
         
 
 
 def menu_loop():
     choice = None
-    choices = ['v', 'a', 'b']
+    choices = ['v', 'a', 'b', 'q']
     while choice != 'q':
         print("Store Inventory...\n\n")
         print("Choose one of the following options or press 'q' to quit.\n")
@@ -67,10 +77,56 @@ def view_entry():
 
 def add_entry():
     """Add a new product to the database"""
+    name = input("Enter the product name: ")
+    while True:
+        quantity = input("Enter the quantity: ")
+        try:
+            quantity = int(quantity)
+            break
+        except ValueError:
+            print("You must enter a number")
+            continue
+    
+    while True:
+        price = input("Enter the price: ")
+        try:
+            price = float(price)
+            price = int(price*100)
+            break
+        except ValueError:
+            print("You must enter a number")
+            continue
+    Product.create(
+        product_name = name,
+        product_quantity = quantity,
+        product_price = price,
+        date_updated = datetime.datetime.now()
+    ).save()
+        
 
 
 def backup_data():
     """Make a backup of the entire inventory"""
+    filename = "Backup_Inventory.csv"
+    fieldnames = [
+        'product_id',
+        'product_name',
+        'product_quantity',
+        'product_price',
+        'date_updated'
+    ]
+
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        all_products = Product.select()
+        for item in all_products:
+            writer.writerow({
+                'product_id': item['product_id'],
+                'product_name': item['product_name'],
+                'product_quantity': item['product_quantity'],
+                'product_price': item['product_price'],
+                'date_updated': item['date_updated']
+            })
 
 
 
@@ -81,7 +137,8 @@ menu = OrderedDict([
 ])    
     
        
-        
+def clear():
+    os.system("cls" if os.name == 'nt' else "clear")        
 
 
 
