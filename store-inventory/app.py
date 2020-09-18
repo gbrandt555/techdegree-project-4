@@ -46,8 +46,6 @@ def clean_data():
                 temp.save()
         
         
-
-
 def menu_loop():
     choice = None
     choices = ['v', 'a', 'b', 'q']
@@ -62,6 +60,7 @@ def menu_loop():
             print("\n\nInvalid option, please try again")
         elif choice in menu:
             menu[choice]()
+
 
 def view_entry(try_again=None):
     """View a single product's inventory"""
@@ -84,13 +83,12 @@ def view_entry(try_again=None):
         print("Product ID: {}\n".format(new_id))
         for entry in entries:
             print("Product name: {}".format(entry.product_name))
-            print("Product price: {}".format(entry.product_price))
+            print("Product price: ${}".format(entry.product_price))
             print("Product quantity: {}".format(entry.product_quantity))
             print("Date updated: {}".format(entry.date_updated))
     else:
         view_entry(try_again=new_id)
        
-
 
 def add_entry():
     """Add a new product to the database"""
@@ -121,7 +119,6 @@ def add_entry():
         date_updated = datetime.datetime.now()
     ).save()
         
-
 
 def backup_data():
     """Make a backup of the entire inventory"""
@@ -156,7 +153,6 @@ def backup_data():
         print("Backup was not able to be completed...")
 
 
-
 menu = OrderedDict([
     ('v', view_entry),
     ('a', add_entry),
@@ -166,8 +162,6 @@ menu = OrderedDict([
        
 def clear():
     os.system("cls" if os.name == 'nt' else "clear")        
-
-
 
 
 if __name__ == "__main__":
