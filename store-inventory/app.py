@@ -121,9 +121,10 @@ def add_entry():
         ).save()
     except IntegrityError:
         temp = Product.get(product_name=name)
-        temp.product_quantity = quantity,
-        temp.product_price = price,
+        temp.product_quantity = quantity
+        temp.product_price = price
         temp.date_updated = datetime.datetime.now()
+        temp.save()
         
 
 def backup_data():
