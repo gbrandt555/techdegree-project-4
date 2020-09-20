@@ -112,12 +112,18 @@ def add_entry():
         except ValueError:
             print("You must enter a number")
             continue
-    Product.create(
-        product_name = name,
-        product_quantity = quantity,
-        product_price = price,
-        date_updated = datetime.datetime.now()
-    ).save()
+    try:
+        Product.create(
+            product_name = name,
+            product_quantity = quantity,
+            product_price = price,
+            date_updated = datetime.datetime.now()
+        ).save()
+    except IntegrityError:
+        temp = Product.get(product_name=name)
+        temp.product_quantity = quantity,
+        temp.product_price = price,
+        temp.date_updated = datetime.datetime.now()
         
 
 def backup_data():
@@ -138,12 +144,14 @@ def backup_data():
         all_products = Product.select()
         for item in all_products:
             writer.writerow({
-                'product_id': item.product_id,
-                'product_name': item.product_name,
-                'product_quantity': item.product_quantity,
-                'product_price': item.product_price,
-                'date_updated': item.date_updated
-            })
+                    'product_id': item.product_id,
+                    'product_name': item.product_name,
+                    'product_quantity': item.product_quantity,
+                    'product_price': item.product_price,
+                    'date_updated': item.date_updated
+                })
+        
+
     
     if os.path.isfile(filename):
         clear()
